@@ -140,6 +140,32 @@ Visual Studio shows the *Welcome.es.resx* file.
 
 .. image:: localization/_static/se.png
 
+Resource file naming
+---------------------
+
+Resources are named for the type of their class minus the name of the assembly (which is the "base namespace" VS will choose for new *.cs files). For example, a French resource in a project whose main assembly is ``LocalizationWebsite.Web.dll`` for the class ``LocalizationWebsite.Web.Startup`` would be named *Startup.fr.resx*. The class ``LocalizationWebsite.Web.Controllers.HomeController`` would be *Controllers.HomeController.fr.resx*. If for some reason your targeted class is in the same project but not in the base namespace you will need the full type name, so in the sample project a type ``ExtraNamespace.Tools`` would be *ExtraNamespace.Tools.fr.resx*.
+
+.. note::Cross-project localization isn't currently supported.
+
+In the sample project, the ``ConfigureServices`` method sets the ``ResourcesPath`` to "Resources", so the project relative path for the home controller's French resource file is *Resources/Controllers.HomeController.fr.resx*. Alternatively, you can use folders to organize resource files. For the home controller, the path would be *Resources/Controllers/HomeController.fr.resx*. If you don't use the ``ResourcesPath`` option, the *.resx* file would go in the project base directory. The resource file for ``HomeController`` would be named *Controllers.HomeController.fr.resx*. The choice of using the dot or path naming convention depends on how you want to organize your resource files.
+
++-----------------------------------------------+--------------------+
+|Resource name                                  | Dot or path naming |
++===============================================+====================+
+|*Resources/Controllers.HomeController.fr.resx* | Dot                |
++-----------------------------------------------+--------------------+
+|*Resources/Controllers/HomeController.fr.resx* | Path               |
++-----------------------------------------------+--------------------+
+
+Resource files using ``@inject IViewLocalizer`` in Razor views follow a similar pattern. The resource file for a view can be named using either dot naming or path naming. Razor view resource files mimic the path of their associated view file. Assuming we set the ``ResourcesPath`` to "Resources", the French resource file associated with the *Views/Book/About.cshtml* view could be either of the following:
+
+- Resources/Views/Home/About.fr.resx
+- Resources/Views.Home.About.fr.resx
+
+If you don't use the ``ResourcesPath`` option, the *.resx* file for a view would be located in the same folder as the view.
+
+If you remove the ".fr" culture designator AND you have the culture set to French (via cookie or other mechanism), the default resource file is read and strings are localized. The Resource manager designates a default or fallback resource, when nothing meets your requested culture you're served the \*.resx file without a culture designator. If you want to just return the key when missing a resource for the requested culture you must not have a default resource file.
+
 Generating resource files with Visual Studio
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
@@ -257,32 +283,6 @@ Suppose you want to let your customers store their language and culture in your 
     });
 
 Use ``RequestLocalizationOptions`` to add or remove localization providers. 
-
-Resource file naming
----------------------
-
-Resources are named for the type of their class minus the default namespace (which is also the name of the assembly). For example, a French resource in the ``LocalizationWebsite.Web`` project for the class ``LocalizationWebsite.Web.Startup`` would be named *Startup.fr.resx*. The class ``LocalizationWebsite.Web.Controllers.HomeController`` would be *Controllers.HomeController.fr.resx*. If for some reason your targeted class is in the same project but not in the base namespace you will need the full type name. For example, in the sample project a type ``ExtraNamespace.Tools`` would be *ExtraNamespace.Tools.fr.resx*.
-
-.. note::Cross-project localization isn't currently supported.
-
-In the sample project, the ``ConfigureServices`` method sets the ``ResourcesPath`` to "Resources", so the project relative path for the home controller's French resource file is *Resources/Controllers.HomeController.fr.resx*. Alternatively, you can use folders to organize resource files. For the home controller, the path would be *Resources/Controllers/HomeController.fr.resx*. If you don't use the ``ResourcesPath`` option, the *.resx* file would go in the project base directory. The resource file for ``HomeController`` would be named *Controllers.HomeController.fr.resx*. The choice of using the dot or path naming convention depends on how you want to organize your resource files.
-
-+-----------------------------------------------+--------------------+
-|Resource name                                  | Dot or path naming |  
-+===============================================+====================+
-|*Resources/Controllers.HomeController.fr.resx* | Dot                |
-+-----------------------------------------------+--------------------+  
-|*Resources/Controllers/HomeController.fr.resx* | Path               |
-+-----------------------------------------------+--------------------+ 
-
-Resource files using ``@inject IViewLocalizer`` in Razor views follow a similar pattern. The resource file for a view can be named using either dot naming or path naming. Razor view resource files mimic the path of their associated view file. Assuming we set the ``ResourcesPath`` to "Resources", the French resource file associated with the *Views/Book/About.cshtml* view could be either of the following:
-
-- Resources/Views/Home/About.fr.resx
-- Resources/Views.Home.About.fr.resx
-
-If you don't use the ``ResourcesPath`` option, the *.resx* file for a view would be located in the same folder as the view.
-
-If you remove the ".fr" culture designator AND you have the culture set to French (via cookie or other mechanism), the default resource file is read and strings are localized. The Resource manager designates a default or fallback resource, when nothing meets your requested culture you're served the \*.resx file without a culture designator. If you want to just return the key when missing a resource for the requested culture you must not have a default resource file.
 
 Setting the culture programmatically
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
